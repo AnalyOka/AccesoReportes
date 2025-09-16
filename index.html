@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Accesos a Reportes — OKA</title>
+  <style>
+    :root{
+      /* Ajusta estos colores a tu guía OKA */
+      --oka-teal: #00d1c7;     /* fondo header */
+      --oka-teal-2:#00c7bb;    /* hover */
+      --oka-navy:#0b2b5c;      /* texto/botones */
+      --oka-lime:#e8ff5a;      /* acento */
+      --bg:#f7f9fb;
+      --card:#ffffff;
+      --ink:#0e1a2b;
+      --muted:#6b7a90;
+      --border:#e4e8f1;
+      --radius:18px;
+      --shadow: 0 8px 24px rgba(13, 37, 62, .08);
+      --shadow-sm: 0 2px 8px rgba(13, 37, 62, .06);
+      --focus: 0 0 0 3px rgba(0,209,199,.25);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;background:var(--bg);color:var(--ink);
+      font:15px/1.4 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+    }
+
+    /* Header */
+    .topbar{
+      background:var(--oka-teal);
+      color:#001a33;
+      display:flex; align-items:center; justify-content:space-between;
+      padding:14px 22px; position:sticky; top:0; z-index:10;
+      box-shadow: var(--shadow-sm);
+    }
+    .brand{display:flex;align-items:center;gap:14px}
+    .brand img.logo{height:36px}
+    .brand .pill{
+      background:var(--oka-lime); color:#0b2b5c; font-weight:700;
+      padding:6px 12px; border-radius:999px; font-size:13px;
+    }
+
+    .wrap{max-width:1100px;margin:28px auto;padding:0 18px}
+
+    .card{
+      background:var(--card); border:1px solid var(--border); border-radius:var(--radius);
+      box-shadow:var(--shadow); padding:18px;
+    }
+    h2{margin:0 0 12px 0; font-size:22px}
+    .row{display:flex; gap:18px; flex-wrap:wrap; margin-bottom:12px}
+    label{font-weight:600; color:var(--ink)}
+    .input, select, button, .file{
+      border:1px solid var(--border); background:#fff; border-radius:12px;
+      padding:10px 12px; font:inherit; color:inherit; outline:none;
+      box-shadow:var(--shadow-sm)
+    }
+    .input:focus, select:focus{box-shadow:var(--focus)}
+    .hint{color:var(--muted); font-size:12px}
+
+    .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}
+    .btn{
+      background:var(--oka-navy); color:#fff; border:none; cursor:pointer;
+      padding:10px 14px; border-radius:12px; font-weight:700
+    }
+    .btn.sec{background:#fff; color:var(--oka-navy); border:1px solid var(--oka-navy)}
+    .btn:hover{filter:brightness(1.03)}
+    .btn:focus{box-shadow:var(--focus)}
+
+    .table-wrap{overflow:auto; border:1px solid var(--border); border-radius:14px}
+    table{border-collapse:collapse; width:100%}
+    th, td{border-bottom:1px solid var(--border); padding:10px; text-align:center}
+    th:first-child, td:first-child{text-align:left}
+    thead th{
+      background:var(--oka-teal); color:#03224a; position:sticky; top:0; z-index:1
+    }
+    tr:hover td{background:#fbfdff}
+
+    .persona-select{min-width:260px}
+    .footer-note{display:flex; align-items:center; gap:10px; color:var(--muted); margin-top:14px}
+    .mascota{height:34px}
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="brand">
+      <img src="logo.png" alt="OKA" class="logo" onerror="this.style.display='none'">
+      <strong>Gestión de Accesos a Reportes</strong>
+    </div>
+    <span class="pill">Formulario interno</span>
+  </div>
+
+  <div class="wrap">
+    <div class="card">
+      <h2>Datos generales</h2>
+      <div class="row">
+        <div>
+          <label for="lider">Líder de área</label><br/>
+          <input id="lider" class="input" placeholder="Ej. Gherson Torpoco">
+        </div>
+        <div>
+          <label for="area">Área</label><br/>
+          <select id="area">
+            <option value="">Seleccionar</option>
+          </select>
+          <div class="hint">Opciones configurables en el bloque de JavaScript.</div>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <label class="btn sec" for="csvPersonas">Cargar personas (CSV)</label>
+        <input id="csvPersonas" type="file" accept=".csv" style="display:none">
+        <select id="addPersonaSelect" class="persona-select"></select>
+        <button class="btn sec" id="btnAddPersona">+ Agregar persona</button>
+        <button class="btn" id="btnExport">Exportar CSV</button>
+        <button class="btn sec" id="btnClear">Limpiar</button>
+      </div>
+
+      <div class="table-wrap">
+        <table id="tabla">
+          <thead id="thead"></thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+
+      <div class="footer-note">
+        <img src="mascota.png" class="mascota" alt="Mascota" onerror="this.style.display='none'">
+        <span>Los cambios se guardan automáticamente en este navegador.</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /************* CONFIGURACIÓN *************/
+    const CONFIG = {
+      areas: ["Comercial","Operaciones","Riesgos","Tecnología","Finanzas","Cobranza"],
+      reportes: ["Reporte 1","Reporte 2","Reporte 3","Reporte 4","Reporte 5"], // agrega/renombra sin tocar el resto
+      personasBase: ["Gherson Torpoco"],  // personas iniciales (además de las que cargues por CSV)
+      personasCatalogo: ["Gherson Torpoco","Luis Torpoco","María Padilla","Renzo Cano","Diana Lee","Robert Campos"], // catálogo para el selector “Agregar persona”
+      storageKey: "oka-form-accesos-v1"
+    };
+
+    /************* ESTADO *************/
+    let state = {
+      lider: "",
+      area: "",
+      personas: [],         // filas activas en la tabla (nombres)
+      checks: {},           // { "Persona|Reporte": true/false }
+    };
+
+    /************* UTILIDADES *************/
+    const $ = (sel)=>document.querySelector(sel);
+    const thead = $("#thead"), tbody = $("#tbody");
+    const lider = $("#lider"), area = $("#area");
+    const addPersonaSelect = $("#addPersonaSelect");
+
+    function saveState(){
+      localStorage.setItem(CONFIG.storageKey, JSON.stringify(state));
+    }
+    function loadState(){
+      const raw = localStorage.getItem(CONFIG.storageKey);
+      if(!raw) return;
+      try{ state = JSON.parse(raw) || state; }catch(e){}
+    }
+    function key(persona, reporte){ return `${persona}|${reporte}`; }
+
+    function setAreas(){
+      CONFIG.areas.forEach(a=>{
+        const opt=document.createElement("option");
+        opt.value=a; opt.textContent=a;
+        area.appendChild(opt);
+      });
+    }
+    function setPersonaSelect(){
+      addPersonaSelect.innerHTML="";
+      const opt0=document.createElement("option");
+      opt0.value=""; opt0.textContent="Seleccionar persona…";
+      addPersonaSelect.appendChild(opt0);
+      CONFIG.personasCatalogo.forEach(p=>{
+        if(!state.personas.includes(p)){
+          const o=document.createElement("option");
+          o.value=p; o.textContent=p;
+          addPersonaSelect.appendChild(o);
+        }
+      });
+    }
+
+    function renderTable(){
+      // encabezados
+      thead.innerHTML="";
+      const trH=document.createElement("tr");
+      const thP=document.createElement("th"); thP.textContent="Persona";
+      trH.appendChild(thP);
+      CONFIG.reportes.forEach(r=>{
+        const th=document.createElement("th"); th.textContent=r;
+        trH.appendChild(th);
+      });
+      thead.appendChild(trH);
+
+      // cuerpo
+      tbody.innerHTML="";
+      state.personas.forEach(persona=>{
+        const tr=document.createElement("tr");
+        const tdName=document.createElement("td");
+        tdName.textContent=persona;
+        tr.appendChild(tdName);
+
+        CONFIG.reportes.forEach(reporte=>{
+          const td=document.createElement("td");
+          const chk=document.createElement("input");
+          chk.type="checkbox";
+          chk.checked = !!state.checks[key(persona,reporte)];
+          chk.addEventListener("change", ()=>{
+            state.checks[key(persona,reporte)] = chk.checked;
+            saveState();
+          });
+          td.appendChild(chk);
+          tr.appendChild(td);
+        });
+
+        tbody.appendChild(tr);
+      });
+    }
+
+    function addPersona(nombre){
+      if(!nombre || state.personas.includes(nombre)) return;
+      state.personas.push(nombre);
+      // al agregar, inicializa claves
+      CONFIG.reportes.forEach(r=>{
+        if(state.checks[key(nombre,r)]===undefined) state.checks[key(nombre,r)] = false;
+      });
+      setPersonaSelect();
+      renderTable();
+      saveState();
+    }
+
+    function importCSVPersonas(file){
+      const reader=new FileReader();
+      reader.onload = ()=>{
+        const text=reader.result;
+        // Admite CSV simple con encabezado "persona" o sin encabezado (una columna)
+        const rows = text.split(/\r?\n/).map(r=>r.trim()).filter(Boolean);
+        if(rows.length===0) return;
+        let start=0, hasHeader=false;
+        if(rows[0].toLowerCase().includes("persona")) { hasHeader=true; start=1; }
+        for(let i=start;i<rows.length;i++){
+          const cols=rows[i].split(",").map(c=>c.trim()).filter(Boolean);
+          const nombre = cols[0];
+          if(nombre && !CONFIG.personasCatalogo.includes(nombre)) CONFIG.personasCatalogo.push(nombre);
+        }
+        setPersonaSelect();
+        alert("Personas cargadas al catálogo. Úsalas con “Agregar persona”.");
+      };
+      reader.readAsText(file, "utf-8");
+    }
+
+    function exportCSV(){
+      // Estructura: lider, area, persona, Reporte 1, Reporte 2, ...
+      const cols = ["lider","area","persona", ...CONFIG.reportes];
+      const rows = [cols.join(",")];
+
+      state.personas.forEach(p=>{
+        const vals = [csv(lider.value), csv(area.value), csv(p)];
+        CONFIG.reportes.forEach(r=>{
+          vals.push( state.checks[key(p,r)] ? "1" : "0" );
+        });
+        rows.push(vals.join(","));
+      });
+
+      const blob = new Blob([rows.join("\n")], {type:"text/csv;charset=utf-8"});
+      const url = URL.createObjectURL(blob);
+      const a=document.createElement("a");
+      a.href=url; a.download="accesos_reportes_oka.csv";
+      document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+    }
+    function csv(v){ // escapar comillas y comas
+      const s = String(v ?? "");
+      if(/[",\n]/.test(s)) return '"' + s.replace(/"/g,'""') + '"';
+      return s;
+    }
+
+    function clearAll(){
+      if(!confirm("¿Borrar datos locales del formulario?")) return;
+      state = { lider:"", area:"", personas:[], checks:{} };
+      lider.value=""; area.value="";
+      setPersonaSelect(); renderTable(); saveState();
+    }
+
+    /************* INIT *************/
+    loadState();
+    setAreas();
+
+    // Restaurar generales
+    lider.value = state.lider || "";
+    area.value = state.area || "";
+    lider.addEventListener("input", ()=>{ state.lider=lider.value; saveState(); });
+    area.addEventListener("change", ()=>{ state.area=area.value; saveState(); });
+
+    // Personas iniciales si no hay
+    if(!state.personas || state.personas.length===0){
+      state.personas = [...CONFIG.personasBase];
+      CONFIG.personasBase.forEach(p=>{
+        CONFIG.reportes.forEach(r=>{
+          state.checks[key(p,r)] = state.checks[key(p,r)] ?? false;
+        });
+      });
+    }
+
+    setPersonaSelect();
+    renderTable();
+
+    // UI events
+    document.getElementById("csvPersonas").addEventListener("change",(e)=>{
+      if(e.target.files?.[0]) importCSVPersonas(e.target.files[0]);
+      e.target.value="";
+    });
+    document.getElementById("btnAddPersona").addEventListener("click",()=>{
+      const val = addPersonaSelect.value;
+      if(!val){ alert("Selecciona una persona."); return; }
+      addPersona(val);
+      addPersonaSelect.value="";
+    });
+    document.getElementById("btnExport").addEventListener("click",exportCSV);
+    document.getElementById("btnClear").addEventListener("click",clearAll);
+  </script>
+</body>
+</html>
