@@ -6,11 +6,10 @@
   <title>Accesos a Reportes — OKA</title>
   <style>
     :root{
-      /* Ajusta estos colores a tu guía OKA */
-      --oka-teal: #00d1c7;     /* fondo header */
-      --oka-teal-2:#00c7bb;    /* hover */
-      --oka-navy:#0b2b5c;      /* texto/botones */
-      --oka-lime:#e8ff5a;      /* acento */
+      --oka-teal: #00d1c7;
+      --oka-teal-2:#00c7bb;
+      --oka-navy:#0b2b5c;
+      --oka-lime:#e8ff5a;
       --bg:#f7f9fb;
       --card:#ffffff;
       --ink:#0e1a2b;
@@ -28,7 +27,6 @@
       font:15px/1.4 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
     }
 
-    /* Header */
     .topbar{
       background:var(--oka-teal);
       color:#001a33;
@@ -44,7 +42,6 @@
     }
 
     .wrap{max-width:1100px;margin:28px auto;padding:0 18px}
-
     .card{
       background:var(--card); border:1px solid var(--border); border-radius:var(--radius);
       box-shadow:var(--shadow); padding:18px;
@@ -116,6 +113,8 @@
         <button class="btn sec" id="btnAddPersona">+ Agregar persona</button>
         <button class="btn" id="btnExport">Exportar CSV</button>
         <button class="btn sec" id="btnClear">Limpiar</button>
+        <!-- Nuevo botón -->
+        <button class="btn" id="btnSend">Enviar a Sheets</button>
       </div>
 
       <div class="table-wrap">
@@ -136,236 +135,58 @@
     /************* CONFIGURACIÓN *************/
     const CONFIG = {
       areas: ["Comercial","Operaciones","Riesgos","Tecnología","Finanzas","Cobranza"],
-      reportes: ["Cobranzas","Conversion LD","FunnelConversion","PerformanceCosechas","PortafolioBNPL","Ventas","OKAMPEONES","FunnelLD_Cajas","Sistema financiero"], // agrega/renombra sin tocar el resto
-      personasBase: ["Gherson Torpoco"],  // personas iniciales (además de las que cargues por CSV)
-      personasCatalogo: ["Abner Ballardo   -  abner@oka.com.pe",
-"Adelaida Lizarraga   -  adelaidalizarraga@oka.com.pe",
-"Agenda Exclusiva Oka   -  agendaexclusiva@oka.com.pe",
-"Alejandro Loo   -  alejandro@oka.com.pe",
-"Alexander Quilca   -  alexanderquilca@oka.com.pe",
-"Alonso Verdeguer   -  alonsoverdeguer@oka.com.pe",
-"Analytics OKA   -  analyticsoka@ihfintech.com.pe",
-"Andrea Huamán   -  andreahuaman@oka.com.pe",
-"Andres Palma   -  andrespalma@oka.com.pe",
-"Andrés Sanchez   -  andressanchez@oka.com.pe",
-"Andy Luya   -  andyluya@oka.com.pe",
-"Aria Sharifi   -  ariasharifi@oka.com.pe",
-"Ariana Felix   -  arianafelix@oka.com.pe",
-"Audrey Cadillo   -  audreycadillo@oka.com.pe",
-"Axel Campos   -  axelcampos@oka.com.pe",
-"Ayrton Urviola   -  ayrtonurviola@oka.com.pe",
-"Bellenger Cadillo   -  bellengercadillo@oka.com.pe",
-"Blanca Segura   -  blancasegura@oka.com.pe",
-"Carlos Castillo   -  carlosdaniel@oka.com.pe",
-"Carlos Isasi   -  carlos@oka.com.pe",
-"Carlos Yucra   -  carlosalberto@oka.com.pe",
-"Casandra Farfan   -  casandra@oka.com.pe",
-"Cesar Antonio  Pejerrey   -  antonio@oka.com.pe",
-"Cesar Moreno   -  cesarmoreno@oka.com.pe",
-"Cilene Vega   -  cilene@oka.com.pe",
-"Claudia Cepero   -  claudia@oka.com.pe",
-"Cobranza Judicial Oka   -  cobranzajudicialoka@oka.com.pe",
-"Conversemos Oka   -  conversemos@oka.com.pe",
-"Cristina  Jayme   -  cristina@oka.com.pe",
-"Cumplimiento   -  cumplimiento@oka.com.pe",
-"Customer Experience   -  coordinacion-cx@oka.com.pe",
-"Daniel Mendoza   -  danielmendoza@oka.com.pe",
-"Daniel Vidal   -  daniel@oka.com.pe",
-"Daniela Salazar   -  danielasalazar@oka.com.pe",
-"Dariana Patiño   -  dari@oka.com.pe",
-"Debora Lujan   -  deboralujan@oka.com.pe",
-"Derechos ARCO   -  derechosarco@ihfintech.com.pe",
-"Diana Cornejo   -  dianacarolina@oka.com.pe",
-"Diana Granda   -  dianagranda@oka.com.pe",
-"Diana Lee   -  diana@oka.com.pe",
-"Diego Crisoles   -  diegoalonso@oka.com.pe",
-"Diego Machaca   -  diego@oka.com.pe",
-"Diego Mendoza   -  diegomendoza@oka.com.pe",
-"Diego Ramírez   -  diegoramirez@oka.com.pe",
-"Diego Suarez   -  diegos@oka.com.pe",
-"DMARC Reports   -  dmarc-reports@oka.com.pe",
-"Eduardo Sasario   -  eduardosasario@oka.com.pe",
-"Elaiza Vasquez   -  elaizavasquez@oka.com.pe",
-"Eliana Casanova   -  elianacasanova@oka.com.pe",
-"Elizabeth Vidarte Cruzado   -  elizabethvidarte@external.ihfintech.com.pe",
-"Elver Valverde   -  elvervalverde@oka.com.pe",
-"Estefania Boluarte   -  estefaniaboluarte@oka.com.pe",
-"Exon Marcelo   -  exonmarcelo@oka.com.pe",
-"Fabrizio Aguirre   -  fabrizioaguirre@oka.com.pe",
-"Francisco Manrique   -  franciscomanrique@oka.com.pe",
-"Francisco Vilca   -  franciscovilca@oka.com.pe",
-"Franco Mariño   -  francomarino@oka.com.pe",
-"Franco Ramos   -  franco@oka.com.pe",
-"Geraldine Quispe   -  geraldine@oka.com.pe",
-"Gerardo Cunya   -  gerardo@oka.com.pe",
-"Gianella Anahi Prado Aliaga   -  gianellaprado@oka.com.pe",
-"Gianmarco García   -  gianmarcogarcia@oka.com.pe",
-"Gineth Ulacio   -  gineth@oka.com.pe",
-"Gustavo Avalos   -  tavo@oka.com.pe",
-"Helpdesk   -  helpdesk@oka.com.pe",
-"Henry Silva   -  henrysilva@oka.com.pe",
-"Info OKA   -  info@mail.oka.com.pe",
-"Isabel Vega   -  isabelvega@oka.com.pe",
-"Italo Gomez   -  italogomez@oka.com.pe",
-"Jair Murillo   -  jair@oka.com.pe",
-"Jasmin Reategui   -  jas@oka.com.pe",
-"Jeniffer Cavero   -  jeniffercavero@oka.com.pe",
-"Jennifer Bernal   -  jennifer@oka.com.pe",
-"Jesenia Chancasanampa   -  jesenia@oka.com.pe",
-"Jesús Baltazar   -  jesusbaltazar@oka.com.pe",
-"Jimena Cary   -  jimenacary@oka.com.pe",
-"Jonathan Torres   -  jonathan@oka.com.pe",
-"Jorge Yacila   -  jorge@oka.com.pe",
-"Jose Olivera   -  jose@oka.com.pe",
-"Juan Valqui   -  juandiego@oka.com.pe",
-"Katherine Marinos   -  kat@oka.com.pe",
-"Katia Crespo   -  katiacrespo@oka.com.pe",
-"Keilita Chavez   -  keilitachavez@oka.com.pe",
-"Leopoldo Enriquez   -  leo@oka.com.pe",
-"Lizette Rivera   -  lizetterivera@oka.com.pe",
-"Luis Gherson Torpoco   -  luisgherson@oka.com.pe",
-"Luis Reyes   -  luiscarlos@oka.com.pe",
-"Luis Torres   -  luis@oka.com.pe",
-"Manuel Baella   -  manuelalejandro@oka.com.pe",
-"Marco Jorge   -  marcoalonso@oka.com.pe",
-"Marco Velarde   -  marco@oka.com.pe",
-"Maria de Jesus Navarrete   -  marianavarrete@oka.com.pe",
-"Maria Padilla   -  mariale@oka.com.pe",
-"Maria Tuesta   -  mariatuesta@oka.com.pe",
-"Mariel Garcia   -  mariel@oka.com.pe",
-"Maripaz Arriola   -  maripaz@oka.com.pe",
-"Mauricio Alegre   -  mauricioalegre@oka.com.pe",
-"Mauricio Gutierrez   -  mauricio@oka.com.pe",
-"Maximo Apaza   -  maximoapaza@oka.com.pe",
-"Miguel Roque   -  miguelroque@oka.com.pe",
-"Milton Garcia   -  miltongarcia@oka.com.pe",
-"MKT Admin Vimeo Prod   -  admin_vimeo_prod@oka.com.pe",
-"Nathaly Fernandez   -  nathalyfernandez@oka.com.pe",
-"Novedades OKA   -  novedades@mail.oka.com.pe",
-"OKA Admin   -  admin@oka.com.pe",
-"OKA Admin DevOps   -  admin_devops@oka.com.pe",
-"OKA AWS Accounts   -  aws-accounts@oka.com.pe",
-"OKA AWS Alerts   -  aws-alerts@oka.com.pe",
-"OKA Comunica   -  okacomunica@oka.com.pe",
-"OKA Credentials   -  credentials@oka.com.pe",
-"OKA Licenses   -  licenses@oka.com.pe",
-"OKA PRODUCT Admin   -  admin_product@oka.com.pe",
-"Ops Support   -  tech-ops-support@oka.com.pe",
-"User   -  tech-user@oka.com.pe",
-"Operaciones-Internas   -  operaciones-internas@oka.com.pe",
-"Pamela Egusquiza   -  pamela@oka.com.pe",
-"Pamela Rupay   -  pamelacecilia@oka.com.pe",
-"Paul Espinoza   -  paul@oka.com.pe",
-"Paulo Torres   -  paulo@oka.com.pe",
-"Productos OKA   -  producto@ihfintech.com.pe",
-"Proveedores   -  proveedores@oka.com.pe",
-"Renzo Cano   -  renzo@oka.com.pe",
-"Reportes Okers   -  reportesokers@ihfintech.com.pe",
-"Reportes Ventas   -  reportesventas@oka.com.pe",
-"Robert Campos   -  robert@oka.com.pe",
-"Roberto Cervantes   -  roberto@oka.com.pe",
-"Rosimar Taborda   -  rosimartaborda@oka.com.pe",
-"ROXANA HERNANDEZ   -  roxanahernandez@oka.com.pe",
-"Sandra Hoyos   -  sandrahoyos@oka.com.pe",
-"Security OKA   -  security@oka.com.pe",
-"Seguridad y Salud en el Trabajo   -  juntaelectoralcsst@oka.com.pe",
-"Seleccion   -  seleccion@oka.com.pe",
-"Sergio Carranza   -  sergiocarranza@oka.com.pe",
-"Sergio Tolentino   -  sergio@oka.com.pe",
-"Silvia Barreto   -  silviabarreto@oka.com.pe",
-"Sofia Yi   -  sofi@oka.com.pe",
-"Soledad Huaman   -  soledad@oka.com.pe",
-"Sthefany Izquierdo   -  sthefanyizquierdo@oka.com.pe",
-"Susan Jara   -  susan@oka.com.pe",
-"Talento OKA   -  talento@oka.com.pe",
-"Delivery   -  tech-delivery@oka.com.pe",
-"Development   -  tech-development@oka.com.pe",
-"Quality   -  tech-quality@oka.com.pe",
-"Walter Jabo   -  walter@oka.com.pe",
-"Wernher Vasquez   -  wernher@oka.com.pe",
-"Yajaira Dayanara Maza   -  dayanaramaza@oka.com.pe",
-"Yamilé Macedo   -  yamilemacedo@oka.com.pe"], // catálogo para el selector “Agregar persona”
+      reportes: ["Cobranzas","Conversion LD","FunnelConversion","PerformanceCosechas","PortafolioBNPL","Ventas","OKAMPEONES","FunnelLD_Cajas","Sistema financiero"],
+      personasBase: ["Gherson Torpoco"],
+      personasCatalogo: ["Ejemplo Persona - persona@oka.com.pe"],
       storageKey: "oka-form-accesos-v1"
     };
 
     /************* ESTADO *************/
-    let state = {
-      lider: "",
-      area: "",
-      personas: [],         // filas activas en la tabla (nombres)
-      checks: {},           // { "Persona|Reporte": true/false }
-    };
+    let state = { lider: "", area: "", personas: [], checks: {} };
 
     /************* UTILIDADES *************/
     const $ = (sel)=>document.querySelector(sel);
     const thead = $("#thead"), tbody = $("#tbody");
     const lider = $("#lider"), area = $("#area");
     const addPersonaSelect = $("#addPersonaSelect");
-
-    function saveState(){
-      localStorage.setItem(CONFIG.storageKey, JSON.stringify(state));
-    }
-    function loadState(){
-      const raw = localStorage.getItem(CONFIG.storageKey);
-      if(!raw) return;
-      try{ state = JSON.parse(raw) || state; }catch(e){}
-    }
+    function saveState(){ localStorage.setItem(CONFIG.storageKey, JSON.stringify(state)); }
+    function loadState(){ const raw = localStorage.getItem(CONFIG.storageKey); if(raw){ try{ state = JSON.parse(raw)||state; }catch(e){} } }
     function key(persona, reporte){ return `${persona}|${reporte}`; }
 
     function setAreas(){
       CONFIG.areas.forEach(a=>{
-        const opt=document.createElement("option");
-        opt.value=a; opt.textContent=a;
-        area.appendChild(opt);
+        const opt=document.createElement("option"); opt.value=a; opt.textContent=a; area.appendChild(opt);
       });
     }
     function setPersonaSelect(){
       addPersonaSelect.innerHTML="";
-      const opt0=document.createElement("option");
-      opt0.value=""; opt0.textContent="Seleccionar persona…";
+      const opt0=document.createElement("option"); opt0.value=""; opt0.textContent="Seleccionar persona…";
       addPersonaSelect.appendChild(opt0);
       CONFIG.personasCatalogo.forEach(p=>{
         if(!state.personas.includes(p)){
-          const o=document.createElement("option");
-          o.value=p; o.textContent=p;
-          addPersonaSelect.appendChild(o);
+          const o=document.createElement("option"); o.value=p; o.textContent=p; addPersonaSelect.appendChild(o);
         }
       });
     }
 
     function renderTable(){
-      // encabezados
       thead.innerHTML="";
       const trH=document.createElement("tr");
-      const thP=document.createElement("th"); thP.textContent="Persona";
-      trH.appendChild(thP);
-      CONFIG.reportes.forEach(r=>{
-        const th=document.createElement("th"); th.textContent=r;
-        trH.appendChild(th);
-      });
+      const thP=document.createElement("th"); thP.textContent="Persona"; trH.appendChild(thP);
+      CONFIG.reportes.forEach(r=>{ const th=document.createElement("th"); th.textContent=r; trH.appendChild(th); });
       thead.appendChild(trH);
 
-      // cuerpo
       tbody.innerHTML="";
       state.personas.forEach(persona=>{
         const tr=document.createElement("tr");
-        const tdName=document.createElement("td");
-        tdName.textContent=persona;
-        tr.appendChild(tdName);
-
+        const tdName=document.createElement("td"); tdName.textContent=persona; tr.appendChild(tdName);
         CONFIG.reportes.forEach(reporte=>{
           const td=document.createElement("td");
-          const chk=document.createElement("input");
-          chk.type="checkbox";
+          const chk=document.createElement("input"); chk.type="checkbox";
           chk.checked = !!state.checks[key(persona,reporte)];
-          chk.addEventListener("change", ()=>{
-            state.checks[key(persona,reporte)] = chk.checked;
-            saveState();
-          });
-          td.appendChild(chk);
-          tr.appendChild(td);
+          chk.addEventListener("change", ()=>{ state.checks[key(persona,reporte)] = chk.checked; saveState(); });
+          td.appendChild(chk); tr.appendChild(td);
         });
-
         tbody.appendChild(tr);
       });
     }
@@ -373,103 +194,82 @@
     function addPersona(nombre){
       if(!nombre || state.personas.includes(nombre)) return;
       state.personas.push(nombre);
-      // al agregar, inicializa claves
-      CONFIG.reportes.forEach(r=>{
-        if(state.checks[key(nombre,r)]===undefined) state.checks[key(nombre,r)] = false;
-      });
-      setPersonaSelect();
-      renderTable();
-      saveState();
+      CONFIG.reportes.forEach(r=>{ if(state.checks[key(nombre,r)]===undefined) state.checks[key(nombre,r)] = false; });
+      setPersonaSelect(); renderTable(); saveState();
     }
 
     function importCSVPersonas(file){
       const reader=new FileReader();
       reader.onload = ()=>{
         const text=reader.result;
-        // Admite CSV simple con encabezado "persona" o sin encabezado (una columna)
-        const rows = text.split(/\r?\n/).map(r=>r.trim()).filter(Boolean);
+        const rows=text.split(/\r?\n/).map(r=>r.trim()).filter(Boolean);
         if(rows.length===0) return;
-        let start=0, hasHeader=false;
-        if(rows[0].toLowerCase().includes("persona")) { hasHeader=true; start=1; }
+        let start=0; if(rows[0].toLowerCase().includes("persona")) start=1;
         for(let i=start;i<rows.length;i++){
           const cols=rows[i].split(",").map(c=>c.trim()).filter(Boolean);
-          const nombre = cols[0];
+          const nombre=cols[0];
           if(nombre && !CONFIG.personasCatalogo.includes(nombre)) CONFIG.personasCatalogo.push(nombre);
         }
         setPersonaSelect();
         alert("Personas cargadas al catálogo. Úsalas con “Agregar persona”.");
       };
-      reader.readAsText(file, "utf-8");
+      reader.readAsText(file,"utf-8");
     }
 
     function exportCSV(){
-      // Estructura: lider, area, persona, Reporte 1, Reporte 2, ...
-      const cols = ["lider","area","persona", ...CONFIG.reportes];
-      const rows = [cols.join(",")];
-
+      const cols=["lider","area","persona", ...CONFIG.reportes];
+      const rows=[cols.join(",")];
       state.personas.forEach(p=>{
-        const vals = [csv(lider.value), csv(area.value), csv(p)];
-        CONFIG.reportes.forEach(r=>{
-          vals.push( state.checks[key(p,r)] ? "1" : "0" );
-        });
+        const vals=[csv(lider.value), csv(area.value), csv(p)];
+        CONFIG.reportes.forEach(r=>{ vals.push(state.checks[key(p,r)] ? "1":"0"); });
         rows.push(vals.join(","));
       });
-
-      const blob = new Blob([rows.join("\n")], {type:"text/csv;charset=utf-8"});
-      const url = URL.createObjectURL(blob);
-      const a=document.createElement("a");
-      a.href=url; a.download="accesos_reportes_oka.csv";
+      const blob=new Blob([rows.join("\n")],{type:"text/csv;charset=utf-8"});
+      const url=URL.createObjectURL(blob);
+      const a=document.createElement("a"); a.href=url; a.download="accesos_reportes_oka.csv";
       document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
     }
-    function csv(v){ // escapar comillas y comas
-      const s = String(v ?? "");
-      if(/[",\n]/.test(s)) return '"' + s.replace(/"/g,'""') + '"';
-      return s;
+    function csv(v){ const s=String(v??""); if(/[",\n]/.test(s)) return '"' + s.replace(/"/g,'""') + '"'; return s; }
+    function clearAll(){ if(!confirm("¿Borrar datos locales del formulario?")) return;
+      state={lider:"",area:"",personas:[],checks:{}}; lider.value=""; area.value="";
+      setPersonaSelect(); renderTable(); saveState(); }
+
+    /************* ENVIAR A SHEETS *************/
+    const WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbzsvpJ3_90pGwK2Xl4Fapeq-joE3nPkhvl8VCtw53TBVKcr3G1_K0dEVWHT-1A64upr/exec"; // 👈 Reemplaza con tu enlace /exec
+
+    function buildRowsForSheet(){
+      return state.personas.map(p=>{
+        const row={ lider:lider.value||"", area:area.value||"", persona:p };
+        CONFIG.reportes.forEach((r,idx)=>{ row[`reporte_${idx+1}`]=!!state.checks[key(p,r)]; });
+        return row;
+      });
     }
 
-    function clearAll(){
-      if(!confirm("¿Borrar datos locales del formulario?")) return;
-      state = { lider:"", area:"", personas:[], checks:{} };
-      lider.value=""; area.value="";
-      setPersonaSelect(); renderTable(); saveState();
+    async function sendToSheets(){
+      const rows=buildRowsForSheet();
+      if(rows.length===0){ alert("No hay personas en la tabla."); return; }
+      if(!area.value){ alert("Selecciona un Área antes de enviar."); return; }
+      try{
+        const res=await fetch(WEBHOOK_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({rows})});
+        const data=await res.json();
+        if(data.ok){ alert(`Enviado correctamente: ${data.added} fila(s).`); }
+        else{ alert("Error al enviar: " + (data.error||"desconocido")); }
+      }catch(err){ alert("No se pudo conectar al endpoint.\\n"+err); }
     }
 
     /************* INIT *************/
-    loadState();
-    setAreas();
-
-    // Restaurar generales
-    lider.value = state.lider || "";
-    area.value = state.area || "";
+    loadState(); setAreas();
+    lider.value=state.lider||""; area.value=state.area||"";
     lider.addEventListener("input", ()=>{ state.lider=lider.value; saveState(); });
     area.addEventListener("change", ()=>{ state.area=area.value; saveState(); });
-
-    // Personas iniciales si no hay
-    if(!state.personas || state.personas.length===0){
-      state.personas = [...CONFIG.personasBase];
-      CONFIG.personasBase.forEach(p=>{
-        CONFIG.reportes.forEach(r=>{
-          state.checks[key(p,r)] = state.checks[key(p,r)] ?? false;
-        });
-      });
-    }
-
-    setPersonaSelect();
-    renderTable();
-
-    // UI events
-    document.getElementById("csvPersonas").addEventListener("change",(e)=>{
-      if(e.target.files?.[0]) importCSVPersonas(e.target.files[0]);
-      e.target.value="";
-    });
-    document.getElementById("btnAddPersona").addEventListener("click",()=>{
-      const val = addPersonaSelect.value;
-      if(!val){ alert("Selecciona una persona."); return; }
-      addPersona(val);
-      addPersonaSelect.value="";
-    });
+    if(!state.personas||state.personas.length===0){ state.personas=[...CONFIG.personasBase];
+      CONFIG.personasBase.forEach(p=>{ CONFIG.reportes.forEach(r=>{ state.checks[key(p,r)]=state.checks[key(p,r)]??false; }); }); }
+    setPersonaSelect(); renderTable();
+    document.getElementById("csvPersonas").addEventListener("change",(e)=>{ if(e.target.files?.[0]) importCSVPersonas(e.target.files[0]); e.target.value=""; });
+    document.getElementById("btnAddPersona").addEventListener("click",()=>{ const val=addPersonaSelect.value; if(!val){ alert("Selecciona una persona."); return; } addPersona(val); addPersonaSelect.value=""; });
     document.getElementById("btnExport").addEventListener("click",exportCSV);
     document.getElementById("btnClear").addEventListener("click",clearAll);
+    document.getElementById("btnSend").addEventListener("click",sendToSheets);
   </script>
 </body>
 </html>
