@@ -246,16 +246,30 @@
     }
 
     async function sendToSheets(){
-      const rows=buildRowsForSheet();
+      const rows = buildRowsForSheet();
       if(rows.length===0){ alert("No hay personas en la tabla."); return; }
       if(!area.value){ alert("Selecciona un Área antes de enviar."); return; }
+  
       try{
-        const res=await fetch(WEBHOOK_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({rows})});
-        const data=await res.json();
-        if(data.ok){ alert(`Enviado correctamente: ${data.added} fila(s).`); }
-        else{ alert("Error al enviar: " + (data.error||"desconocido")); }
-      }catch(err){ alert("No se pudo conectar al endpoint.\\n"+err); }
-    }
+        const params = new URLSearchParams();
+        params.append("data", JSON.stringify({rows}));
+  
+        const res = await fetch(WEBHOOK_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: params.toString()
+        });
+  
+        const data = await res.json();
+        if(data.ok){
+          alert(`Enviado correctamente: ${data.added} fila(s).`);
+        }else{
+          alert("Error al enviar: " + (data.error || "desconocido"));
+        }
+      }catch(err){
+        alert("No se pudo conectar al endpoint.\n" + err);
+      }
+  }
 
     /************* INIT *************/
     loadState(); setAreas();
